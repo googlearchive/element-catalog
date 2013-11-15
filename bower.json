@@ -1,0 +1,16 @@
+{
+  "name": "catalog",
+  "version": "0.0.0",
+  "authors": [
+    "Scott Miles <sjmiles@google.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "platform": "Polymer/platform#master",
+    "polymer-elements": "polymer-elements/polymer-elements#master",
+    "polymer-ui-elements": "polymer-elements/polymer-ui-elements#master",
+    "web-animations-js": "web-animations/web-animations-js#master",
+    "x-meta": "Polymer/x-meta#master"
+  }
+}
