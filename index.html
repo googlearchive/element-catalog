@@ -5,7 +5,7 @@
   <style>
     body {
       font-family: "Helvetica Neue", Arial, Roboto, sans-serif;
-      padding: 10px 128px;
+      padding: 10px 64px;
     }
     h2 {
       width: auto;
@@ -26,21 +26,19 @@
       font-size: 24px;
       font-weight: 700;
       text-transform: uppercase;
-      Xdisplay: inline-block;
       margin-bottom: 28px;
     }
   </style>
   <script src="components/platform/platform.js"></script>
-  <link rel="import" href="components/polymer-elements/elements.html">
-  <link rel="import" href="components/polymer-ui-icon/polymer-ui-icon.html">
   <link rel="import" href="components/x-meta/x-meta.html">
+  <link rel="import" href="components/polymer-layout/polymer-layout.html">
   <link rel="import" href="elements.html">
   <link rel="import" href="metadata.html">
 </head>
 <body>
   <h2>Polymer UI Elements</h2>
   <h3>Get 'Em All</h3>
-  <a href="http://localhost:3003/bower?polymer-ui-elements=https%3A//github.com/sjmiles/polymer-ui-elements.git">Bowager Install</a>
+  <a href="http://localhost:3003/bower?polymer-ui-elements=Polymer/polymer-ui-elements#master">Bowager Install</a>
   <br><br>
   <h3>Individually Wrapped</h3>
 
@@ -71,6 +69,7 @@
         }
         .inner {
           height: 150px;
+          overflow: hidden;
         }
         section {
           margin-left: -100px;
@@ -87,13 +86,19 @@
         meta-archetype {
           height: 300px;
           width: 400px;
-          zoom: 50%;
-          X-webkit-transform-origin: 0 0;
-          X-webkit-transform: scale(0.5);
           overflow: hidden;
-          border: 1px solid #ccc;
+          border: 2px solid #ccc;
           background-color: #eee;
-        }       
+        }
+        Xmeta-archetype {
+          zoom: 50%;
+        }
+        meta-archetype {
+          -webkit-transform-origin: 0 0;
+          -webkit-transform: scale(0.5);
+          transform-origin: 0 0;
+          transform: scale(0.5);
+        }
       </style>
       <x-meta id="meta" list="{{list}}"></x-meta>
       <template repeat="{{list}}">
@@ -102,10 +107,8 @@
             <polymer-layout></polymer-layout>
             <meta-archetype meta="{{}}"></meta-archetype>
             <section flex>
-              <h4>{{id}}<a href="http://localhost:3003/bower?{{id}}=https%3A//github.com/sjmiles/{{id}}.git"><polymer-ui-icon icon="shortcut" style="margin: 0 0 8px 8px;"></polymer-ui-icon></a></h4>
-              <p>We don't have text descriptions in our metadata at this time, sorry. Maybe you would like to take a look at the <a href="{{id}}">test page</a>.</p>
-              <!-- <br>
-              <a href="http://localhost:3003/bower?{{id}}=https%3A//github.com/sjmiles/{{id}}.git">Bowager Install</a> -->
+              <h4>{{id}}<a href="http://localhost:3003/bower?{{id}}=Polymer/{{id}}#master"><polymer-ui-icon icon="shortcut" style="margin: 0 0 8px 8px;"></polymer-ui-icon></a></h4>
+              <p>We don't have text descriptions in our metadata at this time, sorry. Maybe you would like to take a look at the <a href="components/{{id}}">home page</a>.</p>
             </section>
           </div>
         </div>
