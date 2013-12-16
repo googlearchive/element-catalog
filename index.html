@@ -1,20 +1,23 @@
 ﻿<!doctype html>
 <html>
 <head>
-  <title>Polymer UI Elements</title>
+  <title>Element Catalog</title>
   <style>
     body {
       font-family: "Helvetica Neue", Arial, Roboto, sans-serif;
-      padding: 10px 64px;
+      padding: 10px 32px;
+      max-width: 1024px;
+      margin: auto;
+      overflow-y: scroll;
     }
     h2 {
       width: auto;
-      font-size: 40px;
+      font-size: 32px;
       text-transform: uppercase;
       border-radius: 0;
       box-sizing: border-box;
       margin: 0;
-      padding: 64px;
+      padding: 24px 56px;
       color: white;
       background: #4285f4;
     }
@@ -29,95 +32,89 @@
       margin-bottom: 28px;
     }
   </style>
-  <script src="components/platform/platform.js"></script>
-  <link rel="import" href="components/x-meta/x-meta.html">
+  <script src="components/platform-dev/platform.js"></script>
+  <link rel="import" href="components/polymer-items-view/polymer-items-view.html">
   <link rel="import" href="components/polymer-layout/polymer-layout.html">
-  <link rel="import" href="elements.html">
+  <link rel="import" href="components/polymer-ui-icon/polymer-ui-icon.html">
+  <link rel="import" href="components/polymer-ui-toolbar/polymer-ui-toolbar.html">
+  <link rel="import" href="components/polymer-ui-field/polymer-ui-field.html">
+  <link rel="import" href="components/marked-js/marked-js.html">
+  <link rel="import" href="components/x-meta/x-meta.html">
+  <link rel="import" href="x-item.html">
+  <!--<link rel="import" href="elements.html">-->
   <link rel="import" href="metadata.html">
 </head>
-<body>
-  <h2>Polymer UI Elements</h2>
-  <h3>Get 'Em All</h3>
-  <a href="http://localhost:3003/bower?polymer-ui-elements=Polymer/polymer-ui-elements#master">Bowager Install</a>
-  <br><br>
-  <h3>Individually Wrapped</h3>
+<body unresolved>
+  <h2>Element Catalog</h2>
 
   <elt-list></elt-list>
 
-  <polymer-element name="meta-archetype" attributes="meta">
-    <template></template>
-    <script>
-      Polymer('meta-archetype', {
-        meta: null,
-        metaChanged: function () {
-          if (this.meta && this.meta.archetype) {
-            this.shadowRoot.appendChild(this.meta.archetype.content.cloneNode(true));
-          }
-        }
-      });
-    </script>
-  </polymer-element>
-
-  <polymer-element name="elt-list">
-    <template>
-      <style>
-        .item {
-          border-top: 1px solid rgba(0,0,0,0.1);
-          position: relative;
-          cursor: pointer;
-          padding: 48px 0;
-        }
-        .inner {
-          height: 150px;
-          overflow: hidden;
-        }
-        section {
-          margin-left: -100px;
-        }
-        h4 {
-          margin: 0px;
-          font-size: 20px;
-          line-height: 20px;
-          color: #666;
-          vertical-align: middle;
-          text-transform: uppercase;
-          font-weight: 400;
-        }
-        meta-archetype {
-          height: 300px;
-          width: 400px;
-          overflow: hidden;
-          border: 2px solid #ccc;
-          background-color: #eee;
-        }
-        Xmeta-archetype {
-          zoom: 50%;
-        }
-        meta-archetype {
-          -webkit-transform-origin: 0 0;
-          -webkit-transform: scale(0.5);
-          transform-origin: 0 0;
-          transform: scale(0.5);
+  <polymer-element name="elt-list" >
+    <template >
+      <style >
+        polymer-ui-field {
+          background-color: white;
+          margin: 0 0 0 8px;
         }
       </style>
       <x-meta id="meta" list="{{list}}"></x-meta>
-      <template repeat="{{list}}">
-        <div class="item">
-          <div class="inner">
-            <polymer-layout></polymer-layout>
-            <meta-archetype meta="{{}}"></meta-archetype>
-            <section flex>
-              <h4>{{id}}<a href="http://localhost:3003/bower?{{id}}=Polymer/{{id}}#master"><polymer-ui-icon icon="shortcut" style="margin: 0 0 8px 8px;"></polymer-ui-icon></a></h4>
-              <p>We don't have text descriptions in our metadata at this time, sorry. Maybe you would like to take a look at the <a href="components/{{id}}">home page</a>.</p>
-            </section>
-          </div>
-        </div>
-      </template>
+      <br>
+      <polymer-ui-toolbar>
+        <polymer-ui-field flex><polymer-ui-icon icon="search"></polymer-ui-icon><input value="{{key}}"></polymer-ui-field>
+        <polymer-ui-field flex><polymer-ui-icon icon="filter"></polymer-ui-icon><input value="{{filter}}"></polymer-ui-field>
+        <polymer-ui-icon-button icon="quilt" on-click="{{toggleLayout}}"></polymer-ui-icon-button>
+      </polymer-ui-toolbar>
+      <br>
+      <polymer-items-view id="itemsView" items="{{filtered}}" itemKind="x-item"></polymer-items-view>
     </template>
     <script>
       Polymer('elt-list', {
+        key: null,
+        filter: '',
         ready: function () {
-          console.dir(this.$.meta.list);
+          if (this.key === null) {
+            this.key = '';
+          }
+        },
+        filterChanged: function() {
+          this.validate();
+        },
+        keyChanged: function() {
+          this.validate();
+        },
+        validate: function() {
+          var key = (this.key || '').trim().toLowerCase();
+          var keys = key.split(' ');
+          var filter = (this.filter || '').trim().toLowerCase();
+          var filters = filter.split(' ');
+          this.filtered = this.list.filter(function(item) {
+            if (item.isHidden) {
+              return false;
+            }
+            for (var i=0; i<keys.length; i++) {
+              if (keys[i] && item.id.indexOf(keys[i]) < 0) {
+                return false;
+              }
+            }
+            for (var i=0; i<filters.length; i++) {
+              if (filters[i] && item.id.indexOf(filters[i]) >= 0) {
+                return false;
+              }
+            }
+            return true;
+          });
+          this.filtered.sort(function(a,b) {
+            return (a.id < b.id) ? -1 : (a.id === b.id) ? 0 : 1;
+          });
+        },
+        layout: 0,
+        toggleLayout: function() {
+          var layouts = ['grid', 'quilt', /*'column', 'stream',*/ 'list']
+          this.$.itemsView.layout = layouts[++this.layout % layouts.length];
+        },
+        install: function(event, detail, sender) {
+          alert('bower install Polymer/' + sender.id);
+          event.preventDefault();
         }
       });
     </script>

@@ -1,0 +1,161 @@
+<!--
+ Copyright 2013 The Polymer Authors. All rights reserved.
+ Use of this source code is governed by a BSD-style
+ license that can be found in the LICENSE file.
+-->
+
+<polymer-element name="meta-archetype" attributes="meta">
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        height: 150px;
+        width: 200px;
+        overflow: hidden;
+        border: 2px solid #ccc;
+        background-color: #eee;
+      }
+      wrapper {
+        display: block;
+        position: absolute;
+        height: 300px;
+        width: 400px;
+        overflow: hidden;
+        -webkit-transform-origin: 0 0;
+        -webkit-transform: scale(0.5);
+        transform-origin: 0 0;
+        transform: scale(0.5);
+      }
+    </style>
+    <wrapper>
+      <content></content>
+    </wrapper>
+  </template>
+  <script>
+    Polymer('meta-archetype', {
+      meta: null,
+      metaChanged: function () {
+        if (this.meta && this.meta.archetype) {
+          this.appendChild(this.meta.archetype.content.cloneNode(true));
+        }
+      }
+    }); 
+  </script>
+</polymer-element>
+
+<polymer-element name="x-item" attributes="item">
+  <!-- 
+    layout = grid, quilt, column, stream, list
+  -->
+  <template>
+    <style>
+      :host {
+        display: block;
+        background-color: #FCFCFC;
+        border-radius: 2px;
+        box-shadow: rgba(0, 0, 0, 0.098) 0px 2px 4px, rgba(0, 0, 0, 0.098) 0px 0px 3px;
+        margin-bottom: 12px;
+        padding: 16px;
+        Xwhite-space: nowrap;
+        overflow: hidden;
+      }
+      /* list mode */
+      :host(.list) {
+        width: auto;
+        Xwidth: 512px;
+      }
+      :host(.list) marked-js {
+        vertical-align: top;
+        display: inline-block;
+        margin-left: 8px;
+        /*display: block;
+        float: right;
+        width: 256px;*/
+        white-space: normal;
+        width: 60%;
+      }
+      /* grid mode */
+      :host(.grid) {
+        Xwidth: 200px;
+      }
+      :host(.grid) marked-js {
+        display: none;
+      }
+      /* quilt mode */
+      :host(.quilt) {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+      column {
+        width: 200px;
+        display: inline-block;
+        vertical-align: top;
+      }
+      .inner {
+        Xheight: 150px;
+        Xoverflow: hidden;
+      }
+      h4 {
+        margin: 0 0 8px 0;
+        font-size: 0.75em;
+        color: #666;
+        vertical-align: middle;
+        text-transform: uppercase;
+        font-weight: 400;
+      }
+      polymer-ui-icon {
+        margin: 0 8px 4px 0;
+        vertical-align: middle;
+      }
+      a {
+        font-size: 0.60em;
+        background-color: #4285f4;
+        border-radius: 2em;
+        padding: 2px;
+        Xpadding: 1.2em 1.5em;
+        text-decoration: none;
+        color: white;
+        text-transform: uppercase;
+      }
+      a:hover {
+        background-color: #42F485;
+        color: black;
+        -webkit-transition: all ease-in 0.2s;
+        transition: all ease-in 0.2s;
+      }
+      marked-js p {
+        margin-top: 0;
+      }
+    </style>
+    <h4>{{item.id}}</h4>
+    <column>
+      <meta-archetype meta="{{item}}"></meta-archetype>
+      <a href="components/{{item.id}}" target="_blank"><polymer-ui-icon icon="shortcut"></polymer-ui-icon>Details...</a>
+      <!--<a href="http://itch.selfip.net/bowertopia/designer/?element={{item.id}}" target="_blank"><polymer-ui-icon icon="shortcut"></polymer-ui-icon>Sandbox...</a>
+      <a href="http://localhost:3003/bower?{{id}}=Polymer/{{item.id}}#master" target="_blank" id="{{item.id}}" on-click="{{item.install}}"><polymer-ui-icon icon="shortcut"></polymer-ui-icon>Install</a>-->
+    </column>
+    <marked-js id="description">Sorry, api info not available.</marked-js>
+    <polymer-ajax url="components/{{item.id}}/docs.json" id="{{item.id}}" auto on-polymer-response="{{response}}"></polymer-ajax>
+  </template>
+  <script>
+    (function() {
+      Polymer('x-item', {
+        response: function(event, detail, sender) {
+          var name = this.item.id;
+          var api = detail.response.classes[name];
+          if (api) {
+            var desc = api.description || '';
+            //desc = desc.slice(0, 240) + (desc.length > 240 ? '...' : '');
+            //desc = desc.replace(/</g, '&lt;');
+            this.$.description.text = desc;
+          }
+          event.stopPropagation();
+        }
+      });
+    })();
+  </script>
+</polymer-element>
