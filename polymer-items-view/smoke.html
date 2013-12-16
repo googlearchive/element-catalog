@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <title>pi-items-view</title>
+  <script src="../platform/platform.js"></script>
+  <link rel="import" href="pi-items-view.html">
+  <style>
+    body {
+    }
+    pi-items-view {
+      display: block;
+      position: relative;
+      height: 600px;
+      border: 3px solid black;
+      overflow: scroll;
+    }
+  </style>
+</head>
+<body>
+  <h3 onclick='toggle(this)'>pi-items-view</h3>
+  <pi-items-view></pi-items-view>
+  <script>
+    var items = [
+      {
+        imgSrc: '',
+        imageShowing: false,
+        title: 'Foo is the bar while zot has baz to bat.',
+        unread: 15,
+        desc: 'Bat foo bar baz zot',
+        dummyText: 'Dummy text ...?',
+        sourceIcon: '',
+        source: 'Spock`s Brain'
+      }
+    ];
+    for (var i=0; i<4; i++) {
+      items = items.concat(items);
+    }
+    //
+    var view = document.querySelector('pi-items-view');
+    view.setAttribute('items', JSON.stringify(items));
+    //
+    var layout = 0;
+    function toggle(btn) {
+      view.layout = ['grid', 'quilt', 'column', 'stream', 'list'][++layout % 5];
+      btn.textContent = view.layout;
+    }
+  </script>
+</body>
+</html>

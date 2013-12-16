@@ -1,0 +1,85 @@
+<!--
+/*
+ * Copyright 2013 The Polymer Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style
+ * license that can be found in the LICENSE file.
+ */
+-->
+<!--<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="../polymer-ui-icon/polymer-ui-icon.html"/>-->
+
+<polymer-element name="polymer-polymorphic-item" attributes="item kind">
+  <script>
+    Polymer('polymer-polymorphic-item', {
+      kind: 'div',
+      ready: function() {
+        this.async(function() {
+          var elt = document.createElement(this.kind);
+          elt.item = this.item;
+          this.appendChild(elt);
+        });
+      }
+    });
+  </script>
+</polymer-element>
+
+<polymer-element name="polymer-items-view" attributes="itemKind layout items selected">
+  <template>
+    <!-- layout = grid [default], list -->
+    <link rel="stylesheet" href="polymer-items-view.css" />
+
+    <div id="container" loaded="{{loaded}}" class="{{layout}}">
+      <template repeat="{{item in viewItems}}">
+        <polymer-polymorphic-item class="item" item="{{item}}" kind="{{itemKind}}"></polymer-polymorphic-item>
+      </template>
+
+      <div id="more" on-tap="{{loadMore}}">
+        <polymer-ui-icon icon="refresh" theme="polymer-ui-dark-theme"></polymer-ui-icon>
+          Load more articles
+      </div>
+    </div>
+  </template>
+  <script>
+    (function() {
+      Polymer('polymer-items-view', {
+        layout: 'grid',
+        loaded: true,
+        pageSize: 60,
+        items: [],
+        viewItems: [],
+        ready: function() {
+          //this.setAttribute('touch-action', 'scroll');
+        },
+        enteredView: function() {
+          this.updateMoreShowing();
+        },
+        itemsChanged: function() {
+          if (this.items) {
+            this.viewItems = this.items.slice(0, this.pageSize);
+          }
+          this.updateMoreShowing();
+          this.scrollToTop();
+        },
+        scrollToTop: function() {
+          //requestAnimationFrame(function() {
+            this.scrollTop = 0;
+          //}.bind(this));
+        },
+        updateMoreShowing: function() {
+          this.$.more.style.display = 
+            (this.viewItems.length < (this.items.length)) ? '' : 'none';
+        },
+        loadMore: function() {
+          var l = this.viewItems.length;
+          var more = this.items.slice(l, l + this.pageSize);
+          this.viewItems.push.apply(this.viewItems, more);
+          this.updateMoreShowing();
+        },
+        selectItem: function(event, detail, sender) {
+          this.selected = sender.templateInstance.model;
+          this.fire('select', {item: this.selected});
+        }
+      });
+    })();
+  </script>
+</polymer-element>
